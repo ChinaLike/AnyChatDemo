@@ -75,10 +75,6 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
      */
     private LoadingDialog loadingDialog;
     /**
-     * 房间ID
-     */
-    private int roomId;
-    /**
      * 用户ID
      */
     private int userId;
@@ -116,11 +112,9 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
     protected void init(@Nullable Bundle savedInstanceState) {
         //   intentData();
         initLocalVideo();
-        //获取房间号
-        roomId = Integer.parseInt(CacheUtil.get(mContext).getAsString(Key.ROOM_ID));
         userId = SharedPreferencesUtil.getInt(Key.ANYCHAT_USER_ID);
         //开始获取在线人数
-        RequestData.onLineUsers(roomId, false, this);
+        RequestData.onLineUsers(reactBean.getRoomId(), false, this);
         initPop();
 
 
@@ -270,7 +264,6 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
                 break;
             case OnButtonClickListener.MENU_EXIT_MEETING:
                 //退出会议
-                InitActivity.stopService();
                 finish();
                 break;
             case OnButtonClickListener.MENU_MEETING_BANNER:
@@ -312,7 +305,7 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
                 if (onlineUserPop != null) {
                     onlineUserPop.refresh();
                 }
-                RequestData.getSpecifiedUserInfo(roomId, true, new OnRequestListener() {
+                RequestData.getSpecifiedUserInfo(reactBean.getRoomId(), true, new OnRequestListener() {
                     @Override
                     public void onSuccess(int type, Object obj) {
                         UsersBean dwUserBean = (UsersBean) obj;

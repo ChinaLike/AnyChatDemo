@@ -1,5 +1,7 @@
 package com.bairuitech.anychat;
 
+import com.bairuitech.anychat.AnyChatOutParam;
+
 // 数据加密、解密接口
 public interface AnyChatDataEncDecEvent {
 

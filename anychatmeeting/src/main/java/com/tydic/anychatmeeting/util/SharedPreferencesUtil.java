@@ -61,7 +61,7 @@ public class SharedPreferencesUtil {
      * @return
      */
     public static int getInt(String key){
-        return sharedPreferences.getInt(key,0);
+        return sharedPreferences.getInt(key,1);
     }
 
     /**

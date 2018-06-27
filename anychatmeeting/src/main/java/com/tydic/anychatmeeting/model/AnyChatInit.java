@@ -26,7 +26,7 @@ public class AnyChatInit implements AnyChatBaseEvent, AnyChatStateChgEvent, AnyC
 
     private Context mContext;
 
-    private AnyChatCoreSDK anychat;
+    public static AnyChatCoreSDK anychat;
 
     private EventBusBean eventBusBean;
 
@@ -139,6 +139,13 @@ public class AnyChatInit implements AnyChatBaseEvent, AnyChatStateChgEvent, AnyC
     }
 
     /**
+     * 重新连接
+     */
+    public void resetConnect(){
+        connect();
+    }
+
+    /**
      * 用户登录系统
      *
      * @param mStrName 用户名
@@ -167,10 +174,12 @@ public class AnyChatInit implements AnyChatBaseEvent, AnyChatStateChgEvent, AnyC
     /**
      * 销毁AnyChat
      */
-    public void onDestroy() {
-        anychat.LeaveRoom(-1);
-        anychat.Logout();
-        anychat.Release();
+    public static void onDestroy() {
+        if (anychat != null){
+            anychat.LeaveRoom(-1);
+            anychat.Logout();
+            anychat.Release();
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.model.AnyChatInit;
+import com.tydic.anychatmeeting.util.L;
 
 /**
  * 作者：like on 2018/6/6 17:14
@@ -29,13 +30,15 @@ public class AnyChatService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        L.d("Service执行顺序onCreate");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        roomId = intent.getIntExtra(Key.SERVICE_ROOM_ID, 0);
+        L.d("Service执行顺序onStart");
         mStrName = intent.getStringExtra(Key.SERVICE_NAME);
         mStrPwd = intent.getStringExtra(Key.SERVICE_PASSWORD);
+        roomId = intent.getIntExtra(Key.SERVICE_ROOM_ID, 0);
         anyChatInit = new AnyChatInit(getApplicationContext(), roomId, mStrName, mStrPwd);
         anyChatInit.start();
         return super.onStartCommand(intent, flags, startId);

@@ -2,6 +2,7 @@ package com.tydic.anychatmeeting.base;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import com.mylhyl.acp.Acp;
 import com.mylhyl.acp.AcpListener;
 import com.mylhyl.acp.AcpOptions;
 import com.tydic.anychatmeeting.constant.Key;
+import com.tydic.anychatmeeting.react.bean.ReactBean;
 import com.tydic.anychatmeeting.util.CacheUtil;
 import com.tydic.anychatmeeting.util.SharedPreferencesUtil;
 import com.tydic.anychatmeeting.util.T;
@@ -35,6 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected Context mContext;
 
+    protected ReactBean reactBean;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +49,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(setLayout());
         findIds();
         EventBus.getDefault().register(this);
+        getReactBean();
         init(savedInstanceState);
 
+    }
+
+    /**
+     * 获取Intent中的数据后保存到SharedPreference
+     */
+    private void getReactBean() {
+        Intent intent = getIntent();
+        reactBean = (ReactBean) intent.getSerializableExtra(Key.REACT_PARAMS);
     }
 
     /**

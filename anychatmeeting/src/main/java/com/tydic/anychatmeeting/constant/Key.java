@@ -12,6 +12,23 @@ public interface Key {
      * React-Native传递过来的值的Key
      */
     String REACT_PARAMS = "react_params";
+    /**
+     * 以下为存储到SharedPreferences中的Key
+     */
+    String SHAREDPREFERENCES_EMPNAME = "SharedPreferences_empName";
+    String SHAREDPREFERENCES_PASSWORD = "SharedPreferences_passWord";
+    String SHAREDPREFERENCES_ROOM_ID = "SharedPreferences_roomId";
+    String SHAREDPREFERENCES_MEETING_ID = "SharedPreferences_meetingId";
+    String SHAREDPREFERENCES_FEED_USER_NAME = "SharedPreferences_feedUserName";
+    String SHAREDPREFERENCES_FEED_ID = "SharedPreferences_feedId";
+    String SHAREDPREFERENCES_INITIATOR = "SharedPreferences_initiator";
+    String SHAREDPREFERENCES_CREATED_BY = "SharedPreferences_created_by";
+    String SHAREDPREFERENCES_IS_BROADCAST_MODE = "SharedPreferences_isBroadcastMode";
+    String SHAREDPREFERENCES_TOKEN = "SharedPreferences_token";
+    String SHAREDPREFERENCES_USER_ID = "SharedPreferences_userId";
+
+
+
 
     int SUCCESS = 0;//成功
 

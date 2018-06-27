@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 //                CacheUtil.get(MainActivity.this).put(Key.INITIATOR, "c254e80bae1247c499a08cb2807e447d");
 //                CacheUtil.get(MainActivity.this).put(Key.CREATED_BY, "c254e80bae1247c499a08cb2807e447d");
 //                CacheUtil.get(MainActivity.this).put(Key.BROADCAST_MODE, "0");
+                intent.putExtra(Key.REACT_PARAMS,bean);
                 startActivity(intent);
             }
         });
