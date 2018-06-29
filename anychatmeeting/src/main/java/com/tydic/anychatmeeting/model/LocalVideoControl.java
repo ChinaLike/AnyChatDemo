@@ -30,7 +30,7 @@ public class LocalVideoControl {
     public LocalVideoControl(Context context, AnyChatView anyChatView) {
         this.context = context;
         this.anyChatView = anyChatView;
-        videoStatusControl = new VideoStatusControl();
+        videoStatusControl = new VideoStatusControl(context);
         initAnyChat(anyChatView.getSurfaceView().getHolder());
     }
 
@@ -87,6 +87,14 @@ public class LocalVideoControl {
     public void position(int width, int height, int topMargin, int leftMargin) {
         anyChatView.size(width, height);
         anyChatView.margin(topMargin, leftMargin);
+    }
+
+    /**
+     * 媒体音量控制
+     * @param mute
+     */
+    public void mute(boolean mute){
+        videoStatusControl.mute(mute);
     }
 
 

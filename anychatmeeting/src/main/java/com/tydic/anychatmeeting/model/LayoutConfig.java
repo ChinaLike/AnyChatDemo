@@ -38,7 +38,7 @@ public class LayoutConfig {
      * @return
      */
     public int getCurrentLayoutConfigId(){
-        int id  = SharedPreferencesUtil.getInt(Key.LAYOUT_CONFIG_DEFAULT_KEY);
+        int id  = SharedPreferencesUtil.getInt(Key.LAYOUT_CONFIG_DEFAULT_KEY,-1);
         if (id == -1){
             return getLayoutConfig().getDefaultLayoutID();
         }else {

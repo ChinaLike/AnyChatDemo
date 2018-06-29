@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.widget.RelativeLayout;
 
 import com.tydic.anychatmeeting.R;
-import com.tydic.anychatmeeting.base.BaseActivity;
+import com.tydic.anychatmeeting.base.BaseSurfaceActivity;
 import com.tydic.anychatmeeting.bean.EventBusBean;
 import com.tydic.anychatmeeting.bean.SurfaceConfigBean;
 import com.tydic.anychatmeeting.bean.UsersBean;
@@ -15,8 +15,12 @@ import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.model.AnyChatControl;
 import com.tydic.anychatmeeting.model.AnyChatLayout;
 import com.tydic.anychatmeeting.model.FloatWindowControl;
+import com.tydic.anychatmeeting.model.LayoutConfig;
 import com.tydic.anychatmeeting.model.LocalVideoControl;
+import com.tydic.anychatmeeting.model.RemoteVideoControl;
 import com.tydic.anychatmeeting.model.RequestData;
+import com.tydic.anychatmeeting.model.SeparateLineLayout;
+import com.tydic.anychatmeeting.model.inf.LayoutHelper;
 import com.tydic.anychatmeeting.model.inf.OnItemClickListener;
 import com.tydic.anychatmeeting.model.inf.OnLayoutChangeListener;
 import com.tydic.anychatmeeting.model.inf.OnRequestListener;
@@ -25,7 +29,6 @@ import com.tydic.anychatmeeting.ui.dialog.LoadingDialog;
 import com.tydic.anychatmeeting.ui.dialog.MeetingMenuPop;
 import com.tydic.anychatmeeting.ui.dialog.OnButtonClickListener;
 import com.tydic.anychatmeeting.ui.dialog.OnlineUserPop;
-import com.tydic.anychatmeeting.util.CacheUtil;
 import com.tydic.anychatmeeting.util.L;
 import com.tydic.anychatmeeting.util.ScreenUtil;
 import com.tydic.anychatmeeting.util.SharedPreferencesUtil;
@@ -47,37 +50,19 @@ import java.util.List;
  * <p>
  * 描述：显示直播画面
  */
-public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClickListener, OnButtonClickListener,
-        OnLayoutChangeListener, OnRequestListener, OnItemClickListener {
+public class SurfaceActivity extends BaseSurfaceActivity implements MenuLayout.MenuClickListener, OnButtonClickListener,
+        OnLayoutChangeListener, OnItemClickListener,LayoutHelper {
 
-    /**
-     * 视频的跟布局
-     */
-    private RelativeLayout videoRoot;
+
     /**
      * 视频功能布局
      */
     private MenuLayout menuLayout;
     /**
-     * 会议有关菜单
-     */
-    private MeetingMenuPop meetingMenuPop;
-    /**
-     * 悬浮窗
-     */
-    private FloatWindowControl floatWindowControl;
-    /**
      * 布局设置
      */
-    private LayoutSettingPop layoutSettingPop;
-    /**
-     * 显示加载框
-     */
-    private LoadingDialog loadingDialog;
-    /**
-     * 用户ID
-     */
-    private int userId;
+    protected LayoutSettingPop layoutSettingPop;
+
     /**
      * 所有布局文件
      */
@@ -86,22 +71,28 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
      * 视频、语音
      */
     private AnyChatControl anyChatControl;
-    /**
-     * 在线人数
-     */
-    private List<UsersBean> onLineUserList = new ArrayList<>();
-    /**
-     * 在线人数
-     */
-    private OnlineUserPop onlineUserPop;
+
     /**
      * 本地视频控件，主要用来显示本地视频
      */
     private AnyChatView localAnyChatView;
     /**
-     * 本地视频控制
+     * 本地视频
      */
     private LocalVideoControl localVideoControl;
+    /**
+     * 远程视频
+     */
+    private RemoteVideoControl remoteVideoControl;
+    /**
+     * 布局配置文件
+     */
+    private LayoutConfig layoutConfig;
+    /**
+     * 分割线
+     */
+    private RelativeLayout separateLineView;
+
 
     @Override
     protected int setLayout() {
@@ -110,52 +101,22 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
-        //   intentData();
-        initLocalVideo();
-        userId = SharedPreferencesUtil.getInt(Key.ANYCHAT_USER_ID);
-        //开始获取在线人数
-        RequestData.onLineUsers(reactBean.getRoomId(), false, this);
         initPop();
-
-
-////        initAnyChat();
-//        //语音、视频控制
-//        anyChatControl = new AnyChatControl(mContext);
-//        anyChatControl.setUserId(userId);
-//        anyChatControl.setAnyChatLayout(anyChatLayout);
-////        //第一个控件显示自己的视频
-//        anyChatControl.showAllVideo(onLineUserList);
+        initLocalVideo();
+        remoteVideoControl = new RemoteVideoControl(mContext,videoRoot);
+        remoteVideoControl.size(ScreenUtil.getScreenWidth(mContext),ScreenUtil.getScreenHeight(mContext));
+        remoteVideoControl.setLayoutHelper(this);
+        layoutConfig = new LayoutConfig(mContext);
     }
 
-    /**
-     * 初始化悬浮窗
-     */
-    private void initPop() {
-        //功能窗
-        meetingMenuPop = new MeetingMenuPop(mContext, videoRoot);
-        meetingMenuPop.setMenuClickListener(this);
+    @Override
+    protected void initPop() {
+        super.initPop();
         //布局设置窗
         layoutSettingPop = new LayoutSettingPop(mContext, videoRoot);
         layoutSettingPop.setOnLayoutChangeListener(this);
-        //悬浮窗
-        floatWindowControl = new FloatWindowControl(mContext);
-        //进度框
-        loadingDialog = new LoadingDialog(mContext);
-        //在线人数
-        onlineUserPop = new OnlineUserPop(mContext, videoRoot);
-        onlineUserPop.setLocationListener(this);
     }
 
-    /**
-     * 获取传递过来的数据
-     */
-    private void intentData() {
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", 0);
-        onLineUserList.clear();
-        onLineUserList = (List<UsersBean>) intent.getSerializableExtra("userList");
-        L.d("SurfaceActivity在线人数", onLineUserList.toString());
-    }
 
     @Override
     protected void findIds() {
@@ -174,6 +135,13 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
         localVideoControl.position(ScreenUtil.getScreenWidth(mContext), ScreenUtil.getScreenHeight(mContext), 0, 0);
         localVideoControl.camera(SharedPreferencesUtil.getInt(Key.LOCAL_USER_CAMERA_KEY));
         localVideoControl.microphone(SharedPreferencesUtil.getInt(Key.LOCAL_USER_MICROPHONE_KEY));
+    }
+
+    @Override
+    protected void startLayout() {
+        if (remoteVideoControl != null){
+            remoteVideoControl.showAllRemoteView(onLineUserList,layoutConfig);
+        }
     }
 
     /**
@@ -211,11 +179,13 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
                 //摄像头前后控制
                 break;
             case MenuLayout.TYPE_MICROPHONE:
-                //本地声音控制
+                //本地麦克风控制
                 anyChatControl.localMicrophone();
                 break;
             case MenuLayout.TYPE_SOUND:
                 //远程声音控制
+                localVideoControl.mute(sound);
+                sound = !sound;
                 break;
             case MenuLayout.TYPE_FUN:
                 //菜单键
@@ -258,8 +228,8 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
             case OnButtonClickListener.MENU_MINI_WINDOW:
                 //小窗显示
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制为竖屏
-                floatWindowControl.setOnLineUserList(onLineUserList);
-                floatWindowControl.openFloatWindow();
+//                floatWindowControl.setOnLineUserList(onLineUserList);
+//                floatWindowControl.openFloatWindow();
                 finish();
                 break;
             case OnButtonClickListener.MENU_EXIT_MEETING:
@@ -282,16 +252,19 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
      */
     @Override
     public void layoutChange(SurfaceConfigBean.LayoutConfigListBean bean) {
+
         layoutSettingPop.dismiss();
-        SurfaceConfigBean.LayoutConfigListBean listBean = anyChatLayout.getCell();
-        int userSize = onLineUserList.size();
-        int layoutSize = listBean.getCellInfoList().size();
-        int size = userSize > layoutSize ? layoutSize : userSize;
-        for (int i = 0; i < size; i++) {
-            int userId = onLineUserList.get(i).getUserId();
-            anyChatLayout.resetSize(userId, listBean.getCellInfoList().get(i));
-        }
-        anyChatLayout.setSeparateLine();
+        remoteVideoControl.switchLayout(onLineUserList,layoutConfig);
+
+//        SurfaceConfigBean.LayoutConfigListBean listBean = anyChatLayout.getCell();
+//        int userSize = onLineUserList.size();
+//        int layoutSize = listBean.getCellInfoList().size();
+//        int size = userSize > layoutSize ? layoutSize : userSize;
+//        for (int i = 0; i < size; i++) {
+//            int userId = onLineUserList.get(i).getUserId();
+//            anyChatLayout.resetSize(userId, listBean.getCellInfoList().get(i));
+//        }
+//        anyChatLayout.setSeparateLine();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -365,40 +338,13 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
                         break;
                 }
                 //更新状态到服务器
-                feedbackState(Key.UPDATE_CLIENT_STATUS, userId);
+                feedbackState(Key.UPDATE_CLIENT_STATUS, anyChatUserId);
                 break;
 
         }
     }
 
-    @Override
-    public void onSuccess(int type, Object obj) {
-        switch (type) {
-            case Key.ON_LINE_USER:
-                //获取在线人数成功
-                List<UsersBean> userList = (List<UsersBean>) obj;
-                onLineUserList.clear();
-                onLineUserList.addAll(userList);
-                initVideoLayout(ScreenUtil.getScreenWidth(mContext), ScreenUtil.getScreenHeight(mContext));
-                break;
-            case Key.USER_STATE:
-                break;
-            default:
-                break;
-        }
-    }
 
-    @Override
-    public void onError(int type, int code) {
-        switch (type) {
-            case Key.ON_LINE_USER:
-                break;
-            case Key.USER_STATE:
-                break;
-            default:
-                break;
-        }
-    }
 
     @Override
     public void onItemClick(int position, UsersBean bean) {
@@ -411,4 +357,33 @@ public class SurfaceActivity extends BaseActivity implements MenuLayout.MenuClic
     }
 
 
+    @Override
+    public void layout(SurfaceConfigBean.LayoutConfigListBean.CellInfoListBean bean) {
+        if (bean != null){
+            localVideoControl.position((int)(ScreenUtil.getScreenWidth(mContext)*bean.getWidth()+0.5),
+                    (int)(ScreenUtil.getScreenHeight(mContext)*bean.getHeight()+0.5),
+                    (int)(ScreenUtil.getScreenWidth(mContext)*bean.getTop()+0.5),
+                    (int)(ScreenUtil.getScreenHeight(mContext)*bean.getLeft()+0.5));
+        }else {
+            localVideoControl.position(1,1,0,0);
+        }
+    }
+
+    @Override
+    public void layoutFinish() {
+        setSeparateLine();
+    }
+
+    /**
+     * 设置分割线
+     */
+    private void setSeparateLine() {
+        SeparateLineLayout separateLineLayout = new SeparateLineLayout(layoutConfig.getCurrentLayoutConfig(), mContext);
+        separateLineLayout.setSize(ScreenUtil.getScreenWidth(mContext), ScreenUtil.getScreenHeight(mContext));
+        if (separateLineView != null) {
+            videoRoot.removeView(separateLineView);
+        }
+        separateLineView = separateLineLayout.drawSeparateLine();
+        videoRoot.addView(separateLineView);
+    }
 }

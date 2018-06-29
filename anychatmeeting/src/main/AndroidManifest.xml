@@ -23,8 +23,13 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ui.InitActivity" android:label="设置"></activity>
-        <service android:name=".service.AnyChatService"></service>
+        <activity
+            android:name=".ui.InitActivity"
+            android:label="设置" />
+
+        <service android:name=".service.AnyChatService" />
+
+        <activity android:name=".ui.OnLiveActivity"></activity>
     </application>
 
 </manifest>

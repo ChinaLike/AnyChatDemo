@@ -64,6 +64,10 @@ public class SharedPreferencesUtil {
         return sharedPreferences.getInt(key,1);
     }
 
+    public static int getInt(String key , int defValue){
+        return sharedPreferences.getInt(key,defValue);
+    }
+
     /**
      * 存放布尔型
      * @param key

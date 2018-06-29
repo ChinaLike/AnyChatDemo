@@ -97,9 +97,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         int sound = SharedPreferencesUtil.getInt(Key.LOCAL_USER_MICROPHONE_KEY);
         Map<String, String> params = new HashMap<>(7);
         params.put("userId", userId + "");
-        params.put("nickName", CacheUtil.get(mContext).getAsString(Key.FEED_USER_NAME));
-        params.put("meetingId", CacheUtil.get(mContext).getAsString(Key.MEETING_ID));
-        params.put("yhyUserId", CacheUtil.get(mContext).getAsString(Key.FEED_ID));
+        params.put("nickName", reactBean.getFeedUserName());
+        params.put("meetingId", reactBean.getMeetingId());
+        params.put("yhyUserId", reactBean.getFeedId());
         params.put("audioStatus", sound + "");
         params.put("videoStatus", camera + "");
         params.put("displayMode", "1");

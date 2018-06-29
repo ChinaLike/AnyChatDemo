@@ -1,7 +1,6 @@
 package com.tydic.anychatmeeting.ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,34 +11,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bairuitech.anychat.AnyChatCoreSDK;
 import com.mylhyl.acp.Acp;
 import com.mylhyl.acp.AcpListener;
 import com.mylhyl.acp.AcpOptions;
 import com.tydic.anychatmeeting.R;
 import com.tydic.anychatmeeting.base.BaseActivity;
 import com.tydic.anychatmeeting.bean.EventBusBean;
-import com.tydic.anychatmeeting.bean.UsersBean;
 import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.constant.config.Config;
 import com.tydic.anychatmeeting.model.AnyChatInit;
-import com.tydic.anychatmeeting.model.RequestData;
-import com.tydic.anychatmeeting.model.inf.OnRequestListener;
-import com.tydic.anychatmeeting.react.bean.ReactBean;
-import com.tydic.anychatmeeting.service.AnyChatService;
 import com.tydic.anychatmeeting.ui.dialog.LoadingDialog;
-import com.tydic.anychatmeeting.util.CacheUtil;
-import com.tydic.anychatmeeting.util.ClassUtil;
 import com.tydic.anychatmeeting.util.DelayUtil;
-import com.tydic.anychatmeeting.util.L;
 import com.tydic.anychatmeeting.util.SharedPreferencesUtil;
 import com.tydic.anychatmeeting.util.T;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -118,11 +106,9 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
     private void initVideoStatus() {
         cameraStatus = SharedPreferencesUtil.getInt(Key.LOCAL_USER_CAMERA_KEY);
         if (cameraStatus == Key.CAMERA_OPEN) {
-            //执行关闭摄像头
             camera.setCompoundDrawables(null, cameraDrawableOpen, null, null);
             camera.setText("摄像头已打开");
         } else if (cameraStatus == Key.CAMERA_CLOSE) {
-            //执行打开摄像头
             camera.setCompoundDrawables(null, cameraDrawableClose, null, null);
             camera.setText("摄像头已关闭");
         } else {
@@ -130,12 +116,10 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
         }
         micStatus = SharedPreferencesUtil.getInt(Key.LOCAL_USER_MICROPHONE_KEY);
         if (micStatus == Key.MIC_OPEN) {
-            //执行关闭摄像头
-            microPhone.setCompoundDrawables(null, micDrawableClose, null, null);
+            microPhone.setCompoundDrawables(null, micDrawableOpen, null, null);
             microPhone.setText("麦克风已打开");
         } else if (micStatus == Key.MIC_CLOSE) {
-            //执行打开摄像头
-            microPhone.setCompoundDrawables(null, micDrawableOpen, null, null);
+            microPhone.setCompoundDrawables(null, micDrawableClose, null, null);
             microPhone.setText("麦克风已关闭");
         }
     }
@@ -189,6 +173,7 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
         initBtn = (Button) findViewById(R.id.init_btn);
         initBtn.setOnClickListener(this);
         initBtn.setClickable(false);
+        initBtn.setBackgroundResource(R.drawable.button_disclick_shape);
     }
 
 
@@ -267,18 +252,34 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
         } else if (i == R.id.init_sound) {
             isOpenSound();
         } else if (i == R.id.init_btn) {
+            feedbackState(Key.UPDATE_CLIENT_STATUS, userId);
+            if ("重新连接".equals(initBtn.getText().toString())) {
+                initBtn.setClickable(false);
+                initBtn.setBackgroundResource(R.drawable.button_disclick_shape);
+                anyChatInit.resetConnect();
+                return;
+            }
             loadingDialog.show();
             loadingDialog.setText("数据初始化中...");
             DelayUtil.delay(3000, new DelayUtil.DelayHelper() {
                 @Override
                 public void onSuccess() {
                     Intent intent = new Intent(InitActivity.this, SurfaceActivity.class);
-                    intent.putExtra(Key.REACT_PARAMS,reactBean);
+                    intent.putExtra(Key.REACT_PARAMS, reactBean);
                     startActivity(intent);
                     finish();
 
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+
         }
     }
 
@@ -305,7 +306,6 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
                 text = "登录成功";
                 userId = bean.dwUserId;
                 SharedPreferencesUtil.putInt(Key.ANYCHAT_USER_ID, userId);
-                feedbackState(Key.UPDATE_CLIENT_STATUS, userId);
                 break;
             case EventBusBean.ANYCHAT_LOGIN_FAIL:
                 text = "登录失败";
@@ -319,11 +319,12 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
             case EventBusBean.ANYCHAT_ENTER_ROOM_FAIL:
                 text = "重新连接";
                 initBtn.setClickable(true);
+                initBtn.setBackgroundResource(R.drawable.button_click_shape);
                 break;
             case EventBusBean.ANYCHAT_ONLINE_USER_NUM:
                 text = "进入房间";
                 initBtn.setClickable(true);
-
+                initBtn.setBackgroundResource(R.drawable.button_click_shape);
                 break;
             case EventBusBean.ANYCHAT_USER_ENTER_ROOM:
 

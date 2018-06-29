@@ -41,6 +41,7 @@ public class SeparateLineLayout {
      */
     private int width, height;
 
+
     public SeparateLineLayout(SurfaceConfigBean.LayoutConfigListBean bean, Context context) {
         this.bean = bean;
         this.context = context;
