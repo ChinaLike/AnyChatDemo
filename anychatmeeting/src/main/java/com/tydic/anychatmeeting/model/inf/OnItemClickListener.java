@@ -10,11 +10,11 @@ import com.tydic.anychatmeeting.bean.UsersBean;
 
 public interface OnItemClickListener {
     /**
-     * 用户列表被点击
+     * 位置设置
      * @param position  切换前的位置
      * @param bean
      */
-    void onItemClick(int position, UsersBean bean);
+    void positionSetting(int position, UsersBean bean);
 
     /**
      * 开始切换位置
@@ -22,4 +22,22 @@ public interface OnItemClickListener {
      * @param newPosition   切换后的位置
      */
     void changeLocation(int oldPosition, int newPosition);
+
+    /**
+     * 主讲人设置
+     * @param bean
+     */
+    void speakerSetting(UsersBean bean);
+
+    /**
+     * 麦克风设置
+     * @param bean
+     */
+    void micSetting(UsersBean bean);
+
+    /**
+     * 摄像头设置
+     * @param bean
+     */
+    void cameraSetting(UsersBean bean);
 }

@@ -88,8 +88,8 @@ public interface Key {
     int MIC_CLOSE = 0;//麦克风关闭
     int MIC_OPEN = 1;//麦克风打开
 
-    String SOUND_CLOSE = "0";//扩音关闭
-    String SOUND_OPEN = "1";//扩音打开
+    int SOUND_CLOSE = 0;//扩音关闭
+    int SOUND_OPEN = 1;//扩音打开
 
     String SPEAKER = "1";//是主讲人
     String NO_SPEAKER = "0";//不是主讲人
@@ -111,6 +111,12 @@ public interface Key {
      * 本地用户麦克风
      */
     String LOCAL_USER_MICROPHONE_KEY = "localUserMicrophone";
+
+    /**
+     * 本地用户麦克风
+     */
+    String LOCAL_USER_SOUND_KEY = "localUserSound";
+
     /**
      * 房间号
      */

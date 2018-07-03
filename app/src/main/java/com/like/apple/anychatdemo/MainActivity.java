@@ -9,7 +9,6 @@ import android.widget.EditText;
 import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.react.bean.ReactBean;
 import com.tydic.anychatmeeting.ui.InitActivity;
-import com.tydic.anychatmeeting.util.CacheUtil;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 bean.setFeedId("c254e80bae1247c499a08cb2807e447d");
                 bean.setInitiator("c254e80bae1247c499a08cb2807e447d");
                 bean.setCreated_by("c254e80bae1247c499a08cb2807e447d");
-                bean.setIsBroadcastMode("0");
+                bean.setMode(0);
                 bean.setToken("");
                 bean.setUserId("");
 //                CacheUtil.get(MainActivity.this).put(Key.EMPNAME, userName.getText()+"");

@@ -23,7 +23,7 @@ import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.model.RequestData;
 import com.tydic.anychatmeeting.model.inf.OnItemClickListener;
 import com.tydic.anychatmeeting.model.inf.OnRequestListener;
-import com.tydic.anychatmeeting.util.CacheUtil;
+import com.tydic.anychatmeeting.react.bean.ReactBean;
 import com.tydic.anychatmeeting.util.ScreenUtil;
 import com.tydic.anychatmeeting.widget.LoadingView;
 
@@ -49,7 +49,6 @@ public class OnlineUserPop extends RelativePopupWindow implements OnRequestListe
      */
     private LoadingView loadingView;
 
-
     /**
      * 在线人员列表
      */
@@ -61,6 +60,8 @@ public class OnlineUserPop extends RelativePopupWindow implements OnRequestListe
 
     private Context context;
 
+    private ReactBean reactBean;
+
     public void setLocationListener(OnItemClickListener locationListener) {
         adapter.setLocationListener(locationListener);
     }
@@ -71,8 +72,8 @@ public class OnlineUserPop extends RelativePopupWindow implements OnRequestListe
 
         View view = LayoutInflater.from(context).inflate(R.layout.pop_online_list, null);
         setContentView(view);
-        tvNum = (TextView) view.findViewById(R.id.tvNum);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        tvNum = view.findViewById(R.id.tvNum);
+        recyclerView =  view.findViewById(R.id.recyclerView);
         loadingView = view.findViewById(R.id.loadingView);
 
         int width = ScreenUtil.getScreenWidth(context);
@@ -85,7 +86,17 @@ public class OnlineUserPop extends RelativePopupWindow implements OnRequestListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setAnimationStyle(0);
         }
+
+    }
+
+    /**
+     * 用户数据
+     * @param reactBean
+     */
+    public void setReactBean(ReactBean reactBean) {
+        this.reactBean = reactBean;
         adapter = new OnLineUserAdapter(context, list);
+        adapter.isControl(reactBean);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
@@ -97,7 +108,7 @@ public class OnlineUserPop extends RelativePopupWindow implements OnRequestListe
         loadingView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         loadingView.loading("在线人员获取中...");
-        RequestData.onLineUsers(Integer.parseInt(CacheUtil.get(context).getAsString(Key.ROOM_ID)), false, this);
+        RequestData.onLineUsers(reactBean.getRoomId(), false, this);
     }
 
     @Override
@@ -145,7 +156,7 @@ public class OnlineUserPop extends RelativePopupWindow implements OnRequestListe
      */
     public void refresh(){
         if (isShowing()) {
-            RequestData.onLineUsers(Integer.parseInt(CacheUtil.get(context).getAsString(Key.ROOM_ID)), false, this);
+            RequestData.onLineUsers(reactBean.getRoomId(), false, this);
         }
     }
 

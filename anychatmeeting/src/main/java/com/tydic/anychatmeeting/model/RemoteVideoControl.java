@@ -3,16 +3,19 @@ package com.tydic.anychatmeeting.model;
 import android.content.Context;
 import android.view.SurfaceHolder;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bairuitech.anychat.AnyChatCoreSDK;
 import com.tydic.anychatmeeting.bean.SurfaceConfigBean;
 import com.tydic.anychatmeeting.bean.UsersBean;
 import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.model.inf.LayoutHelper;
+import com.tydic.anychatmeeting.util.ScreenUtil;
 import com.tydic.anychatmeeting.util.SharedPreferencesUtil;
 import com.tydic.anychatmeeting.widget.AnyChatView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +127,7 @@ public class RemoteVideoControl {
      *
      * @param bean
      */
-    public void remoteMic(UsersBean bean) {
+    private void remoteMic(UsersBean bean) {
         if (bean.getAudioStatus() == Key.MIC_OPEN) {
             videoStatusControl.openMic(bean.getUserId());
         } else if (bean.getAudioStatus() == Key.MIC_CLOSE) {
@@ -138,13 +141,38 @@ public class RemoteVideoControl {
      * @param anyChatView
      * @param bean
      */
-    public void remoteCamera(AnyChatView anyChatView, UsersBean bean) {
+    private void remoteCamera(AnyChatView anyChatView, UsersBean bean) {
         if (bean.getVideoStatus() == Key.CAMERA_OPEN) {
             anyChatView.openCamera();
+            videoStatusControl.openCamera(bean.getUserId());
         } else if (bean.getVideoStatus() == Key.CAMERA_CLOSE) {
             anyChatView.closeCamera();
+            videoStatusControl.closeCamera(bean.getUserId());
         } else {
             anyChatView.noCamera();
+            videoStatusControl.closeCamera(bean.getUserId());
+        }
+    }
+
+    /**
+     * 摄像头控制
+     *
+     * @param userId
+     * @param cameraStatus
+     */
+    public void remoteCamera(int userId, int cameraStatus) {
+        AnyChatView anyChatView = anyChatViewMap.get(TAG + userId);
+        if (anyChatView != null) {
+            if (cameraStatus == Key.CAMERA_OPEN) {
+                anyChatView.openCamera();
+                // videoStatusControl.openCamera(userId);
+            } else if (cameraStatus == Key.CAMERA_CLOSE) {
+                anyChatView.closeCamera();
+                // videoStatusControl.closeCamera(userId);
+            } else {
+                anyChatView.noCamera();
+                // videoStatusControl.closeCamera(userId);
+            }
         }
     }
 
@@ -175,11 +203,22 @@ public class RemoteVideoControl {
         anyChatView.size((int) (width * layoutBean.getWidth() + 0.5), (int) (height * layoutBean.getHeight() + 0.5));
         anyChatView.margin((int) (height * layoutBean.getTop() + 0.5), (int) (width * layoutBean.getLeft() + 0.5));
         anyChatView.init();
+        setNickName(anyChatView.getNickNameText(), bean.getNickName());
         anyChatViewMap.put(TAG + bean.getUserId(), anyChatView);
         rootView.addView(anyChatView);
         showRemoteVideo(anyChatView.getSurfaceView().getHolder(), bean.getUserId());
         remoteCamera(anyChatView, bean);
         return anyChatView;
+    }
+
+    /**
+     * 设置昵称
+     *
+     * @param textView
+     * @param nickName
+     */
+    private void setNickName(TextView textView, String nickName) {
+        textView.setText(nickName);
     }
 
     /**
@@ -250,7 +289,7 @@ public class RemoteVideoControl {
                 }
                 alreadyAddKey.add(key);
             }
-            if (list.size() > layoutList.size()){
+            if (list.size() > layoutList.size()) {
                 //布局增多，会在剩下未显示的在线人员中抽取用户显示
                 for (int i = anyChatViewMap.size(); i < layoutList.size(); i++) {
                     UsersBean usersBean = list.get(i);
@@ -270,6 +309,105 @@ public class RemoteVideoControl {
         //最后把当前布局数修改
         currentLayoutSize = newLayoutSize;
 
+    }
+
+    /**
+     * 进入房间，先从前到后查找是否有空位，有空位就依次布局，没有空位就在最后界面能显示的地方显示视频
+     *
+     * @param userBean     进入的用户
+     * @param layoutConfig 布局文件
+     */
+    public void enterRoom(UsersBean userBean, LayoutConfig layoutConfig) {
+        //当前的布局文件
+        SurfaceConfigBean.LayoutConfigListBean currLayout = layoutConfig.getCurrentLayoutConfig();
+        if (currLayout == null) {
+            return;
+        }
+        //每一个布局文件配置
+        List<SurfaceConfigBean.LayoutConfigListBean.CellInfoListBean> layoutList = currLayout.getCellInfoList();
+        int layoutSize = layoutList.size();
+        if (anyChatViewMap.size() >= layoutSize) {
+            //布局已经满了，不能在进行布局
+            remoteMic(userBean);
+        } else {
+            //布局未满，可进行布局
+            List<Integer> positionList = getAlreadyLayoutPosition();
+            for (int i = 0; i < layoutSize; i++) {
+                //已占有位置不包含这个位置
+                if (!positionList.contains(i)) {
+                    showRemoteView(userBean, layoutList.get(i)).position(i);
+                    layoutHelper.layoutFinish();
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * 退出房间
+     *
+     * @param userId 退出用户ID
+     */
+    public void exitRoom(int userId) {
+        AnyChatView anyChatView = anyChatViewMap.get(TAG + userId);
+        if (anyChatView != null) {
+            rootView.removeView(anyChatView);
+            anyChatViewMap.remove(TAG + userId);
+        }
+    }
+
+    /**
+     * 获取已经占用的位置
+     *
+     * @return
+     */
+    private List<Integer> getAlreadyLayoutPosition() {
+        List<Integer> list = new ArrayList<>();
+        for (String key : anyChatViewMap.keySet()) {
+            AnyChatView anyChatView = anyChatViewMap.get(key);
+            list.add(anyChatView.getPosition());
+        }
+        //进行排序
+        Collections.sort(list);
+        return list;
+    }
+
+    /**
+     * 设置主讲人
+     *
+     * @param bean
+     */
+    public void speaker(UsersBean bean) {
+        rootView.removeAllViews();
+        anyChatViewMap.clear();
+        if (bean.getUserId() == anyChatUserId) {
+            //主讲人是自己
+            layoutHelper.layout(getCustomLayout());
+        } else {
+            layoutHelper.layout(null);
+            AnyChatView anyChatView = new AnyChatView(context);
+            anyChatView.size(ScreenUtil.getScreenWidth(context), ScreenUtil.getScreenHeight(context));
+            anyChatView.margin(0, 0);
+            anyChatView.init();
+            setNickName(anyChatView.getNickNameText(), bean.getNickName());
+            rootView.addView(anyChatView);
+            showRemoteVideo(anyChatView.getSurfaceView().getHolder(), bean.getUserId());
+            remoteCamera(anyChatView, bean);
+        }
+    }
+
+    /**
+     * 自定义布局
+     *
+     * @return
+     */
+    private SurfaceConfigBean.LayoutConfigListBean.CellInfoListBean getCustomLayout() {
+        SurfaceConfigBean.LayoutConfigListBean.CellInfoListBean bean = new SurfaceConfigBean.LayoutConfigListBean.CellInfoListBean();
+        bean.setWidth(1);
+        bean.setHeight(1);
+        bean.setTop(0);
+        bean.setLeft(0);
+        return bean;
     }
 
     /**

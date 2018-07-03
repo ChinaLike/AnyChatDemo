@@ -1,6 +1,7 @@
 package com.tydic.anychatmeeting.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 在线人员列表
@@ -114,6 +115,21 @@ public class UsersBean implements Serializable {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    /**
+     * 移除指定集合中指定属性的数据
+     * @param usersBeans
+     * @param userId
+     */
+    public static void removeUser(List<UsersBean> usersBeans , int userId){
+        for (int i = 0; i < usersBeans.size(); i++) {
+            UsersBean bean = usersBeans.get(i);
+            if (bean.getUserId() == userId){
+                usersBeans.remove(bean);
+                return;
+            }
+        }
     }
 
 

@@ -1,6 +1,5 @@
 package com.tydic.anychatmeeting.base;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,19 +10,15 @@ import android.view.WindowManager;
 
 import com.bairuitech.anychat.AnyChatCoreSDK;
 import com.google.gson.Gson;
-import com.mylhyl.acp.Acp;
-import com.mylhyl.acp.AcpListener;
-import com.mylhyl.acp.AcpOptions;
+import com.tydic.anychatmeeting.bean.UsersBean;
 import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.react.bean.ReactBean;
-import com.tydic.anychatmeeting.util.CacheUtil;
 import com.tydic.anychatmeeting.util.SharedPreferencesUtil;
 import com.tydic.anychatmeeting.util.T;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -105,5 +100,29 @@ public abstract class BaseActivity extends AppCompatActivity {
         params.put("displayMode", "1");
         String info = new Gson().toJson(params);
         return AnyChatCoreSDK.getInstance(this).UserInfoControl(userId, code, 0, 0, info);
+    }
+
+    /**
+     * 用户状态信息
+     *
+     * @param bean
+     */
+    protected int feedbackState(UsersBean bean) {
+        Map<String, String> params = new HashMap<>(7);
+        params.put("userId", bean.getUserId() + "");
+        params.put("nickName", bean.getNickName());
+        params.put("meetingId", bean.getMeetingId());
+        params.put("yhyUserId", bean.getYhyUserId());
+        params.put("audioStatus", bean.getAudioStatus() + "");
+        params.put("videoStatus", bean.getVideoStatus() + "");
+        params.put("displayMode", "1");
+        String info = new Gson().toJson(params);
+        return AnyChatCoreSDK.getInstance(this).UserInfoControl(bean.getUserId(), Key.UPDATE_CLIENT_STATUS, 0, 0, info);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

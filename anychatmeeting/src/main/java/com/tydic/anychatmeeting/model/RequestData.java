@@ -130,14 +130,13 @@ public class RequestData {
     /**
      * 向服务器发送消息
      *
-     * @param userId
      * @param character
      * @param listener
      */
-    public static void sendMsg(int userId, String character, final UsersBean usersBean, final int type, final OnRequestListener listener) {
+    public static void sendMsg(String character, final UsersBean usersBean, final int type, final OnRequestListener listener) {
         Call<BaseBean<String>> call = RetrofitCreateHelper
                 .createApi(RetrofitService.class, Config.BASE_URL_ANYCHAT)
-                .sendMsg(userId, character);
+                .sendMsg(usersBean.getUserId(), character);
         call.enqueue(new Callback<BaseBean<String>>() {
             @Override
             public void onResponse(Call<BaseBean<String>> call, Response<BaseBean<String>> response) {
@@ -156,7 +155,6 @@ public class RequestData {
 
             @Override
             public void onFailure(Call<BaseBean<String>> call, Throwable t) {
-                T.showShort("连接超时");
                 if (listener != null) {
                     listener.onError(type, Key.OVER_TIME);
                 }

@@ -19,7 +19,7 @@ public class ReactBean implements Serializable {
     private String feedId;//主讲人的ID
     private String initiator;//发起人
     private String created_by;//创建者
-    private String isBroadcastMode;//是否是直播模式
+    private int  mode;//是否是直播模式
     private String token;
     private String userId;
 
@@ -90,12 +90,12 @@ public class ReactBean implements Serializable {
         this.created_by = created_by;
     }
 
-    public String getIsBroadcastMode() {
-        return isBroadcastMode;
+    public int getMode() {
+        return mode;
     }
 
-    public void setIsBroadcastMode(String isBroadcastMode) {
-        this.isBroadcastMode = isBroadcastMode;
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
 
@@ -127,7 +127,7 @@ public class ReactBean implements Serializable {
                 ", feedId='" + feedId + '\'' +
                 ", initiator='" + initiator + '\'' +
                 ", created_by='" + created_by + '\'' +
-                ", isBroadcastMode='" + isBroadcastMode + '\'' +
+                ", mode='" + mode + '\'' +
                 ", token='" + token + '\'' +
                 ", userId='" + userId + '\'' +
                 '}';

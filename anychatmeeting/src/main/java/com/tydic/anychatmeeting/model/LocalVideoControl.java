@@ -77,6 +77,15 @@ public class LocalVideoControl {
     }
 
     /**
+     * 设置昵称
+     * @param userId
+     */
+    public void setNickName(int userId){
+        UserInfoControl userInfoControl = new UserInfoControl();
+        anyChatView.getNickNameText().setText(userInfoControl.nickName(userId));
+    }
+
+    /**
      * 设置视频显示位置
      *
      * @param width

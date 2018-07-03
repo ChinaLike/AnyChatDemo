@@ -398,7 +398,7 @@ public class AnyChatInit implements AnyChatBaseEvent, AnyChatStateChgEvent, AnyC
      */
     @Override
     public void OnAnyChatTransBuffer(int dwUserid, byte[] lpBuf, int dwLen) {
-        postMessage(eventBusBean.ANYCHAT_FILTER_DATA,dwUserid,0,false,lpBuf,dwLen);
+        postMessage(eventBusBean.ANYCHAT_TRANS_BUFFER,dwUserid,0,false,lpBuf,dwLen);
     }
 
     /**

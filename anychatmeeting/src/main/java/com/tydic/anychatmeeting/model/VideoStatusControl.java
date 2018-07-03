@@ -77,7 +77,7 @@ public class VideoStatusControl implements CameraHelper,MicrophoneHelper{
         }else {
             //静音取消
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, //音量类型
-                    volume,
+                    this.volume,
                     AudioManager.FLAG_PLAY_SOUND);
         }
     }

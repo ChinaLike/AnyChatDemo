@@ -297,7 +297,9 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
                 text = "连接成功";
                 break;
             case EventBusBean.ANYCHAT_CONNECT_FAIL:
-                text = "连接失败";
+                text = "重新连接";
+                initBtn.setClickable(true);
+                initBtn.setBackgroundResource(R.drawable.button_click_shape);
                 break;
             case EventBusBean.ANYCHAT_START_LOGIN:
                 text = "开始登录...";

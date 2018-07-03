@@ -32,7 +32,7 @@ public class JsAndroidModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void jsActivity(String empName, String passWord, String roomId, String meetingId, String feedId,
-                           String initiator, String created_by, int isBroadcastMode, String token, String userId) {
+                           String initiator, String created_by, int mode, String token, String userId) {
 
 //        CacheUtil.get(getCurrentActivity()).put(Key.EMPNAME, empName);
 //        CacheUtil.get(getCurrentActivity()).put(Key.PASSWORD, passWord);
@@ -46,7 +46,7 @@ public class JsAndroidModule extends ReactContextBaseJavaModule {
         bean.setFeedId(feedId);
         bean.setInitiator(initiator);
         bean.setCreated_by(created_by);
-        bean.setIsBroadcastMode(isBroadcastMode + "");
+        bean.setMode(mode);
         bean.setToken(token);
         bean.setUserId(userId);
         Intent intent;

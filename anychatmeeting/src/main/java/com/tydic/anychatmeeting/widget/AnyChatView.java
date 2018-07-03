@@ -138,7 +138,8 @@ public class AnyChatView extends RelativeLayout implements ViewHelper,VideoHelpe
 
     @Override
     public void openCamera() {
-        surfaceView.setVisibility(VISIBLE);
+//        surfaceView.setVisibility(VISIBLE);
+        surfaceView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         cameraParent.setVisibility(GONE);
         surfaceView.setZOrderOnTop(false);
         surfaceView.setZOrderMediaOverlay(true);
@@ -148,7 +149,9 @@ public class AnyChatView extends RelativeLayout implements ViewHelper,VideoHelpe
 
     @Override
     public void closeCamera() {
-        surfaceView.setVisibility(GONE);
+        //todo 关闭摄像头不隐藏控件，直接缩小,星期一处理这里
+//        surfaceView.setVisibility(GONE);
+        surfaceView.setLayoutParams(new LayoutParams(1,1));
         cameraParent.setVisibility(VISIBLE);
         //设置背景颜色
         cameraParent.setBackgroundColor(context.getResources().getColor(R.color.hava_carame));
@@ -159,7 +162,8 @@ public class AnyChatView extends RelativeLayout implements ViewHelper,VideoHelpe
 
     @Override
     public void noCamera() {
-        surfaceView.setVisibility(GONE);
+//        surfaceView.setVisibility(GONE);
+        surfaceView.setLayoutParams(new LayoutParams(1,1));
         cameraParent.setVisibility(VISIBLE);
         //设置背景颜色
         cameraParent.setBackgroundColor(context.getResources().getColor(R.color.hava_carame));

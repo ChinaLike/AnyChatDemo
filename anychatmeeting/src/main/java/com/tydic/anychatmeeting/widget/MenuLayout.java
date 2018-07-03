@@ -69,6 +69,10 @@ public class MenuLayout extends RelativeLayout implements View.OnClickListener {
      * 麦克风状态
      */
     private int microphone;
+    /**
+     * 扩音状态
+     */
+    private int sound;
 
     private Timer mTimer = new Timer();
 
@@ -125,8 +129,10 @@ public class MenuLayout extends RelativeLayout implements View.OnClickListener {
     private void initStatus(){
         camera = SharedPreferencesUtil.getInt(Key.LOCAL_USER_CAMERA_KEY);
         microphone = SharedPreferencesUtil.getInt(Key.LOCAL_USER_MICROPHONE_KEY);
+        sound = SharedPreferencesUtil.getInt(Key.LOCAL_USER_SOUND_KEY);
         initCameraStatus(camera);
         initMicStatus(microphone);
+        initSoundStatus(sound);
     }
 
     /**
@@ -152,6 +158,19 @@ public class MenuLayout extends RelativeLayout implements View.OnClickListener {
             meeting_microphone.setBackgroundResource(R.drawable.img_meeting_microphone);
         }else {
             meeting_microphone.setBackgroundResource(R.drawable.meeting_microphone_disable);
+        }
+    }
+
+    /**
+     * 扩音
+     * @param sound
+     */
+    public void initSoundStatus(int sound){
+        //扩音
+        if (sound == Key.SOUND_OPEN){
+            meeting_sound.setBackgroundResource(R.drawable.img_meeting_sound);
+        }else {
+            meeting_sound.setBackgroundResource(R.drawable.meeting_speaker_disable);
         }
     }
 
@@ -211,9 +230,11 @@ public class MenuLayout extends RelativeLayout implements View.OnClickListener {
             } else if (id == R.id.meeting_microphone) {
                 //本地声音
                 menuClickListener.onMenuClick(TYPE_MICROPHONE);
+                initStatus();
             } else if (id == R.id.meeting_sound) {
                 //远程声音
                 menuClickListener.onMenuClick(TYPE_SOUND);
+                initStatus();
             }
             if (id == R.id.meeting_menu) {
                 //菜单键

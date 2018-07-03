@@ -31,5 +31,36 @@ public class OnLiveActivity extends BaseSurfaceActivity {
 
     }
 
+    /**
+     * 直播模式下不需要实现
+     */
+    @Override
+    protected void showLayoutSetting() {
 
+    }
+
+    @Override
+    public void positionSetting(int position, UsersBean bean) {
+
+    }
+
+    @Override
+    public void changeLocation(int oldPosition, int newPosition) {
+
+    }
+
+    @Override
+    public void speakerSetting(UsersBean bean) {
+
+    }
+
+    @Override
+    public void micSetting(UsersBean bean) {
+
+    }
+
+    @Override
+    public void cameraSetting(UsersBean bean) {
+
+    }
 }

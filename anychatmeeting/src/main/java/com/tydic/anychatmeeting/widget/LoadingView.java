@@ -1,9 +1,11 @@
 package com.tydic.anychatmeeting.widget;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -50,7 +52,7 @@ public class LoadingView extends RelativeLayout {
         failLayout.setVisibility(GONE);
         successText = loadingView.findViewById(R.id.loading_text);
         failBtn = loadingView.findViewById(R.id.error_btn);
-        addView(loadingView);
+        addView(loadingView,new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 
     public void loading(){
