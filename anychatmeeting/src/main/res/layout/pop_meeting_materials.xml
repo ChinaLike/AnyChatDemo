@@ -2,10 +2,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:background="@color/bg_black"
+    android:id="@+id/parent"
     android:layout_height="match_parent">
 
-    <com.tydic.anychatmeeting.widget.ReaderView
-        android:id="@+id/reader"
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:src="@mipmap/row"
+            android:paddingLeft="10dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:lines="1"
+            android:ellipsize="end"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <View
+        android:background="#666666"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <com.tydic.anychatmeeting.widget.LoadingView
+        android:id="@+id/loadingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/materialsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

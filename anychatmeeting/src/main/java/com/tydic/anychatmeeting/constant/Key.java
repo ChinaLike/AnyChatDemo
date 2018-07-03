@@ -42,6 +42,7 @@ public interface Key {
 
     int USER_STATE = 2;//用户状态
 
+    int MEETING_MATERIALS = 3;//会议材料
 
 
     int UPDATE_CLIENT_STATUS = 1001;
@@ -75,11 +76,6 @@ public interface Key {
     //AnyChat的UserId
     String ANYCHAT_USER_ID = "ANYCHAT_USER_ID";
 
-    int COLUMN_ONE = 1;//远程视频显示1列
-    int COLUMN_TWO = 2;//远程视频显示2列
-    int COLUMN_THREE = 3;//远程视频显示3列
-    int COLUMN_FOUR = 4;//远程视频显示4列
-
     int CAMERA_OTHER = -1;//人员已经退出，恢复摄像头初始状态
     int CAMERA_NO = 0;//没有摄像头
     int CAMERA_CLOSE = 1;//有摄像头但是是关闭状态
@@ -90,6 +86,9 @@ public interface Key {
 
     int SOUND_CLOSE = 0;//扩音关闭
     int SOUND_OPEN = 1;//扩音打开
+
+    int MODE_ONLIVE = 1;//直播模式
+    int MODE_COMMON = 0;//普通模式
 
     String SPEAKER = "1";//是主讲人
     String NO_SPEAKER = "0";//不是主讲人

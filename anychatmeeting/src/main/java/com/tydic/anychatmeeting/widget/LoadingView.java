@@ -86,4 +86,8 @@ public class LoadingView extends RelativeLayout {
         }
     }
 
+    public void success(){
+        setVisibility(GONE);
+    }
+
 }

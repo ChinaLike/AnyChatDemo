@@ -34,9 +34,6 @@ public class JsAndroidModule extends ReactContextBaseJavaModule {
     public void jsActivity(String empName, String passWord, String roomId, String meetingId, String feedId,
                            String initiator, String created_by, int mode, String token, String userId) {
 
-//        CacheUtil.get(getCurrentActivity()).put(Key.EMPNAME, empName);
-//        CacheUtil.get(getCurrentActivity()).put(Key.PASSWORD, passWord);
-//        CacheUtil.get(getCurrentActivity()).put(Key.USER_ID, feedId);
         ReactBean bean = new ReactBean();
         bean.setEmpName(empName);
         bean.setPassWord(passWord);

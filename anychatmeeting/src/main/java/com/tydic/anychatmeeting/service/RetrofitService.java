@@ -1,6 +1,7 @@
 package com.tydic.anychatmeeting.service;
 
 import com.tydic.anychatmeeting.base.BaseBean;
+import com.tydic.anychatmeeting.bean.DocumentBean;
 import com.tydic.anychatmeeting.bean.UsersBean;
 
 import java.util.List;
@@ -48,5 +49,10 @@ public interface RetrofitService {
     @GET("anychat/{roomId}/lastuserstate/{yhyUserId}")
     Call<BaseBean<UsersBean>> getUserState(@Path("roomId") String roomId,
                                            @Path("yhyUserId") String yhyUserId);
+
+
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @GET("api/meetings/{meetingId}/meeting-materials")
+    Call<BaseBean<List<DocumentBean>>> getMeetingMaterials(@Path("meetingId") String meetingId);
 
 }

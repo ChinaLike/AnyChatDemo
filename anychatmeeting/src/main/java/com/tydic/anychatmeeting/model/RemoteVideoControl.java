@@ -106,7 +106,7 @@ public class RemoteVideoControl {
                     anyChatView.position(i);
                     anyChatViewMap.put(TAG + id, anyChatView);
                 } else {
-                    remoteMic(userBean);
+                    remoteMic(userBean.getAudioStatus(),id);
                     showRemoteView(userBean, layoutList.get(i)).position(i);
                 }
             } else {
@@ -114,7 +114,7 @@ public class RemoteVideoControl {
                 if (id == anyChatUserId) {
                     layoutHelper.layout(null);
                 } else {
-                    remoteMic(userBean);
+                    remoteMic(userBean.getAudioStatus(),id);
                 }
             }
         }
@@ -125,13 +125,13 @@ public class RemoteVideoControl {
     /**
      * 语音控制
      *
-     * @param bean
+     * @param micStatus
      */
-    private void remoteMic(UsersBean bean) {
-        if (bean.getAudioStatus() == Key.MIC_OPEN) {
-            videoStatusControl.openMic(bean.getUserId());
-        } else if (bean.getAudioStatus() == Key.MIC_CLOSE) {
-            videoStatusControl.closeMic(bean.getUserId());
+    public void remoteMic(int micStatus ,int userId) {
+        if (micStatus == Key.MIC_OPEN) {
+            videoStatusControl.openMic(userId);
+        } else if (micStatus == Key.MIC_CLOSE) {
+            videoStatusControl.closeMic(userId);
         }
     }
 
@@ -202,6 +202,24 @@ public class RemoteVideoControl {
         AnyChatView anyChatView = new AnyChatView(context);
         anyChatView.size((int) (width * layoutBean.getWidth() + 0.5), (int) (height * layoutBean.getHeight() + 0.5));
         anyChatView.margin((int) (height * layoutBean.getTop() + 0.5), (int) (width * layoutBean.getLeft() + 0.5));
+        anyChatView.init();
+        setNickName(anyChatView.getNickNameText(), bean.getNickName());
+        anyChatViewMap.put(TAG + bean.getUserId(), anyChatView);
+        rootView.addView(anyChatView);
+        showRemoteVideo(anyChatView.getSurfaceView().getHolder(), bean.getUserId());
+        remoteCamera(anyChatView, bean);
+        return anyChatView;
+    }
+
+    /**
+     * 创建一个显示远程视频，主要用户直播模式
+     * @param bean
+     * @return
+     */
+    public AnyChatView showRemoteView(UsersBean bean){
+        AnyChatView anyChatView = new AnyChatView(context);
+        anyChatView.size(width,height);
+        anyChatView.margin(0,0);
         anyChatView.init();
         setNickName(anyChatView.getNickNameText(), bean.getNickName());
         anyChatViewMap.put(TAG + bean.getUserId(), anyChatView);
@@ -328,7 +346,7 @@ public class RemoteVideoControl {
         int layoutSize = layoutList.size();
         if (anyChatViewMap.size() >= layoutSize) {
             //布局已经满了，不能在进行布局
-            remoteMic(userBean);
+            remoteMic(userBean.getAudioStatus(),userBean.getUserId());
         } else {
             //布局未满，可进行布局
             List<Integer> positionList = getAlreadyLayoutPosition();

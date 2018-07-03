@@ -14,6 +14,8 @@ public interface Config {
 
     String BASE_URL_ANYCHAT = "http://cloudmeeting.dicyun.win:8089/control/api/";//会控地址
     //String BASE_URL_ANYCHAT = "http://120.78.214.165:8089/control/api/";//演示环境会议地址
+
+    String BASE_MEETING_URL = "http://cloudmeeting.dicyun.win:8088/";
     /**
      * 布局文件配置名称
      */

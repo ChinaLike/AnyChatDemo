@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 bean.setFeedId("c254e80bae1247c499a08cb2807e447d");
                 bean.setInitiator("c254e80bae1247c499a08cb2807e447d");
                 bean.setCreated_by("c254e80bae1247c499a08cb2807e447d");
-                bean.setMode(0);
+                bean.setMode(1);
                 bean.setToken("");
                 bean.setUserId("");
 //                CacheUtil.get(MainActivity.this).put(Key.EMPNAME, userName.getText()+"");

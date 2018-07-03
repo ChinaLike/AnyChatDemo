@@ -3,6 +3,7 @@ package com.tydic.anychatmeeting.model;
 import android.text.TextUtils;
 
 import com.tydic.anychatmeeting.base.BaseBean;
+import com.tydic.anychatmeeting.bean.DocumentBean;
 import com.tydic.anychatmeeting.bean.UsersBean;
 import com.tydic.anychatmeeting.constant.Key;
 import com.tydic.anychatmeeting.constant.config.Config;
@@ -160,5 +161,37 @@ public class RequestData {
                 }
             }
         });
+    }
+
+    /**
+     * 获取会议材料
+     *
+     * @param meetingId   会议id
+     */
+    public static void getMeetingMaterials(String meetingId, String token,final OnRequestListener listener) {
+        Call<BaseBean<List<DocumentBean>>> call = RetrofitCreateHelper
+                .createApi(RetrofitService.class, Config.BASE_MEETING_URL,token)
+                .getMeetingMaterials(meetingId);
+        call.enqueue(new Callback<BaseBean<List<DocumentBean>>>() {
+            @Override
+            public void onResponse(Call<BaseBean<List<DocumentBean>>> call, Response<BaseBean<List<DocumentBean>>> response) {
+                BaseBean<List<DocumentBean>> baseBean = response.body();
+                if (listener != null) {
+                    if (baseBean != null && baseBean.getData() != null) {
+                        listener.onSuccess(Key.MEETING_MATERIALS, baseBean.getData());
+                    } else {
+                        listener.onError(Key.MEETING_MATERIALS, Key.FAIL);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseBean<List<DocumentBean>>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onError(Key.MEETING_MATERIALS, Key.OVER_TIME);
+                }
+            }
+        });
+
     }
 }

@@ -51,4 +51,5 @@ dependencies {
     compile 'com.facebook.react:react-native:+'
     compile files('libs/tbs_sdk_thirdapp_v3.1.0.1034_43100_sharewithdownload_obfs_20170301_182143.jar')
     compile 'com.mylhyl:acp:1.2.0'
+    compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
 }

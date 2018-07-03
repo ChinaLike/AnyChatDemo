@@ -264,11 +264,15 @@ public class InitActivity extends BaseActivity implements View.OnClickListener {
             DelayUtil.delay(3000, new DelayUtil.DelayHelper() {
                 @Override
                 public void onSuccess() {
-                    Intent intent = new Intent(InitActivity.this, SurfaceActivity.class);
+                    Intent intent;
+                    if (reactBean.getMode() == Key.MODE_ONLIVE) {
+                        intent = new Intent(InitActivity.this, OnLiveActivity.class);
+                    } else {
+                        intent = new Intent(InitActivity.this, SurfaceActivity.class);
+                    }
                     intent.putExtra(Key.REACT_PARAMS, reactBean);
                     startActivity(intent);
                     finish();
-
                 }
             });
         }

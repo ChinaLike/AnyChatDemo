@@ -17,6 +17,7 @@ import com.tydic.anychatmeeting.model.inf.OnItemClickListener;
 import com.tydic.anychatmeeting.model.inf.OnRequestListener;
 import com.tydic.anychatmeeting.ui.dialog.LoadingDialog;
 import com.tydic.anychatmeeting.ui.dialog.MeetingMenuPop;
+import com.tydic.anychatmeeting.ui.dialog.MeetingMeterialsPop;
 import com.tydic.anychatmeeting.ui.dialog.OnButtonClickListener;
 import com.tydic.anychatmeeting.ui.dialog.OnlineUserPop;
 import com.tydic.anychatmeeting.util.L;
@@ -66,6 +67,11 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
      */
     protected OnlineUserPop onlineUserPop;
     /**
+     * 会议材料
+     */
+    protected MeetingMeterialsPop meetingMeterialsPop;
+
+    /**
      * 在线人员
      */
     protected List<UsersBean> onLineUserList = new ArrayList<>();
@@ -112,7 +118,11 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
     protected void initLocalVideo() {
         localVideoControl = new LocalVideoControl(mContext, localAnyChatView);
         localAnyChatView.init();
-        localVideoControl.position(ScreenUtil.getScreenWidth(mContext), ScreenUtil.getScreenHeight(mContext), 0, 0);
+        if (reactBean.getMode() == Key.MODE_ONLIVE){
+            localVideoControl.position(1,1, 0, 0);
+        }else {
+            localVideoControl.position(ScreenUtil.getScreenWidth(mContext), ScreenUtil.getScreenHeight(mContext), 0, 0);
+        }
         localVideoControl.camera(SharedPreferencesUtil.getInt(Key.LOCAL_USER_CAMERA_KEY));
         localVideoControl.microphone(SharedPreferencesUtil.getInt(Key.LOCAL_USER_MICROPHONE_KEY));
         localVideoControl.setNickName(anyChatUserId);
@@ -132,6 +142,10 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
         onlineUserPop = new OnlineUserPop(mContext, videoRoot);
         onlineUserPop.setReactBean(reactBean);
         onlineUserPop.setLocationListener(this);
+        meetingMeterialsPop = new MeetingMeterialsPop(mContext, videoRoot);
+        meetingMeterialsPop.setUserId(reactBean.getUserId());
+        meetingMeterialsPop.setToken(reactBean.getToken());
+        meetingMeterialsPop.getMaterials(reactBean.getMeetingId());
     }
 
     /**
@@ -159,6 +173,7 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
                 break;
             case OnButtonClickListener.MENU_MEETING_MATERIAL:
                 //会议材料
+                meetingMeterialsPop.show();
                 break;
             case OnButtonClickListener.MENU_MINI_WINDOW:
                 //小窗显示
@@ -185,11 +200,13 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
                 onLineUserList.clear();
                 onLineUserList.addAll((List<UsersBean>) obj);
                 UsersBean speakerBean = userInfoControl.getSpeaker(onLineUserList);
-                if ( speakerBean == null){
+                if (speakerBean == null) {
+                    //1.普通模式下，显示所有人视频，2.直播模式下，没有主讲人将等待主讲人进入
                     startLayout();
-                }else {
+                } else {
                     setSpeaker(speakerBean);
                 }
+
                 break;
             case Key.USER_STATE:
                 break;
@@ -267,7 +284,11 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
                 break;
             case MenuLayout.TYPE_SETTING:
                 //设置界面布局形式
-                showLayoutSetting();
+                if (reactBean.getMode() == Key.MODE_ONLIVE){
+                    T.showShort("直播模式下无法改变布局");
+                }else {
+                    showLayoutSetting();
+                }
                 break;
             default:
                 break;
@@ -332,6 +353,9 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
 
             case EventBusBean.ANYCHAT_MIC_STATUS_CHG:
                 //麦克风状态改变
+                if (dwUserid != anyChatUserId) {
+                    remoteMic(dwUserid, bean.dwState);
+                }
                 break;
             case EventBusBean.ANYCHAT_FILTER_DATA:
                 //设置主讲人
@@ -399,18 +423,14 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
      *
      * @param enterUserBean
      */
-    protected void enterRoom(UsersBean enterUserBean) {
-
-    }
+    protected abstract void enterRoom(UsersBean enterUserBean) ;
 
     /**
      * 退出房间
      *
      * @param exitUserid
      */
-    protected void exitRoom(int exitUserid) {
-
-    }
+    protected abstract void exitRoom(int exitUserid) ;
 
     /**
      * 摄像头控制
@@ -418,9 +438,14 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
      * @param userId
      * @param cameraStatus
      */
-    protected void remoteCamera(int userId, int cameraStatus) {
+    protected abstract void remoteCamera(int userId, int cameraStatus);
 
-    }
+    /**
+     * 摄像头控制
+     * @param userId
+     * @param micStatus
+     */
+    protected abstract void remoteMic(int userId , int micStatus);
 
     /**
      * 设置主讲人，仅在普通视频模式下有
@@ -450,6 +475,9 @@ public abstract class BaseSurfaceActivity extends BaseActivity implements OnRequ
         //关闭pop
         if (meetingMenuPop.isShowing()) {
             meetingMenuPop.dismiss();
+        }
+        if (meetingMeterialsPop.isShowing()) {
+            meetingMeterialsPop.dismiss();
         }
 
     }

@@ -167,7 +167,6 @@ public class SurfaceActivity extends BaseSurfaceActivity implements OnButtonClic
      */
     @Override
     protected void enterRoom(UsersBean enterUserBean) {
-        super.enterRoom(enterUserBean);
         remoteVideoControl.enterRoom(enterUserBean, layoutConfig);
     }
 
@@ -178,14 +177,17 @@ public class SurfaceActivity extends BaseSurfaceActivity implements OnButtonClic
      */
     @Override
     protected void exitRoom(int exitUserid) {
-        super.exitRoom(exitUserid);
         remoteVideoControl.exitRoom(exitUserid);
     }
 
     @Override
     protected void remoteCamera(int userId, int cameraStatus) {
-        super.remoteCamera(userId, cameraStatus);
         remoteVideoControl.remoteCamera(userId, cameraStatus);
+    }
+
+    @Override
+    protected void remoteMic(int userId, int micStatus) {
+        remoteVideoControl.remoteMic(micStatus,userId);
     }
 
     @Override
